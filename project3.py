@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from numpy import diag, exp, ones, zeros, eye, dot, linspace, meshgrid, vectorize
-from numpy.linalg.linalg import _multi_dot_matrix_chain_order
 
 def RMS(v, dx):
     return np.sqrt(dx)*np.linalg.norm(v)
@@ -206,10 +205,11 @@ if __name__ == '__main__':
         xgrid = linspace(0, 1, N + 1)
         tgrid = linspace(0, 1, M + 1)
 
-        g = vectorize(lambda x: exp(-100*((x - 0.5)**2)))
+        g1 = vectorize(lambda x: exp(-100*((x - 0.5)**2)))
+        g2 = vectorize(lambda x: abs(x - 0.5) < 0.1)
 
         [T, X] = meshgrid(xgrid, tgrid)
-        U = convdifint(a, d, g(xgrid), N, M)
+        U = convdifint(a, d, g2(xgrid), N, M)
 
         fig = plt.figure()
         ax = fig.add_subplot(projection='3d')
