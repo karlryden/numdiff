@@ -67,6 +67,30 @@ def LaxWenint(a, u0, tf, N, M):
 
     return approx
 
+def convdif(u, a, d, dt, dx):
+    N = len(u)
+    sub = d/(dx**2) + a/(2*dx)
+    sup = d/(dx**2) - a/(2*dx)
+    Adx = sub*diag(ones(N - 1), -1) + sup*diag(ones(N - 1), 1) - 2/(dx**2)*eye(N)
+
+    return u + dt*dot(Adx, u)
+
+
+def convdifint(a, d, u0, N, M):
+    dt = 1/M
+    dx = 1/N
+
+    approx = zeros((M + 1, len(u0)))
+    approx[0] = u0
+    un = u0
+
+    for i in range(1, M + 1):
+        un = convdif(un, a, d, dt, dx)
+        approx[i] = un
+
+    return approx
+
+
 if __name__ == '__main__':
     def task11():
         # Method becomes stable when dt/dx^2 = (N + 1)/M >=~ 20 (???!!!) 
@@ -173,27 +197,30 @@ if __name__ == '__main__':
         # Not sure how to motivate further.
 
     def task31():
-        N = 99
-        M = 2499
-        tf = 0.1
         a = 1
-        d = 1
+        d = 0.1
+
+        N = 4
+        M = 100
 
         xgrid = linspace(0, 1, N + 1)
-        tgrid = linspace(0, tf, M + 1)
+        tgrid = linspace(0, 1, M + 1)
 
         g = vectorize(lambda x: exp(-100*((x - 0.5)**2)))
-        #g = vectorize(lambda x: 0.5 - abs(x - 0.5) if (abs(x - 0.5) <= 0.25) else 0.25) # -^-
 
         [T, X] = meshgrid(xgrid, tgrid)
-        U = LaxWenint(a, g(xgrid), tf, N, M)
+        U = convdifint(a, d, g(xgrid), N, M)
+
         fig = plt.figure()
         ax = fig.add_subplot(projection='3d')
         ax.plot_wireframe(T, X, U)
         ax.set(xlabel='x')
         ax.set(ylabel='t')
-        # ax.zlabel('u')
+
         plt.show()
+
+    def task41():
+        pass
 
     # task11()
     # task12()
