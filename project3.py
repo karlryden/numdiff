@@ -67,24 +67,29 @@ if __name__ == '__main__':
         # Method becomes stable when dt/dx^2 = (N + 1)/M >=~ 20 (???!!!) 
         N = 100
         M = 2050
+        M_v = 2000
         tf = 0.1
         dx = 1/(N + 1)
         Tdx = 1/(dx**2)*(diag(ones(N + 1), 1) + diag(ones(N + 1), -1) - 2*eye(N + 2))
         xgrid = linspace(0, 1, N + 2)
-        ingrid = xgrid[1:-1]
         tgrid = linspace(0, tf, M + 1)
+        tgrid_v = linspace(0, tf, M_v + 1)
         [T, X] = meshgrid(xgrid, tgrid)
-        print(np.size(T, 0), np.size(T, 1))
-        print(np.size(X, 0), np.size(X, 1))
+        [T_v, X_v] = meshgrid(xgrid, tgrid_v)
 
         # Definitely not an eigenfunction
         g = vectorize(lambda x: x*(1 - x)*np.exp(-(x**2)))
         U = eulerint(Tdx, g(xgrid), tf, M)
-        print(np.size(U, 0), np.size(U, 1))
+        U_v = eulerint(Tdx, g(xgrid), tf, M_v)
         
         fig = plt.figure()
         ax = fig.add_subplot(projection='3d')
-        ax.plot_wireframe(T, X, U)
+        ax.plot_surface(T, X, U)
+
+        fig_v = plt.figure()
+        ax_v = fig_v.add_subplot(projection='3d')
+        ax_v.plot_surface(T_v, X_v, U_v)
+
         plt.show()
 
     def task12():
@@ -103,7 +108,7 @@ if __name__ == '__main__':
         
         fig = plt.figure()
         ax = fig.add_subplot(projection='3d')
-        ax.plot_wireframe(T, X, U)
+        ax.plot_surface(T, X, U)
         plt.show()
 
     def task21():
@@ -122,7 +127,7 @@ if __name__ == '__main__':
         U = LaxWenint(a, g(xgrid), tf, N, M)
         fig = plt.figure()
         ax = fig.add_subplot(projection='3d')
-        ax.plot_wireframe(T, X, U)
+        ax.plot_surface(T, X, U)
         ax.set(xlabel='x')
         ax.set(ylabel='t')
         # ax.zlabel('u')
@@ -151,6 +156,6 @@ if __name__ == '__main__':
         # ax.zlabel('u')
         plt.show()
 
-    task11()
+    # task11()
     task12()
     # task21()
