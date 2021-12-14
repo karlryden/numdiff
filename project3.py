@@ -89,6 +89,31 @@ def convdifint(a, d, u0, N, M):
 
     return approx
 
+def LW(uold, dt, dx):
+    N = len(uold)
+    unew = zeros(N)
+    for i in range(N):
+        unew[i] = uold[i] - dt/(2*dx)*uold[0]*(uold[(i+1)%N] - uold[(i-1)%N]) + dt**2/2*uold[i]*(1/(dx**2)*uold[i]*(uold[(i+1)%N] - 2*uold[i] + uold[(i-1)%N]) + 1/dx*(uold[(i+1)%N] - uold[(i-1)%N]))
+
+    return unew
+
+def LWint(d, u0, tf, N, M):
+    dt = tf/M
+    dx = 1/N
+
+    approx = zeros((M + 1, N + 1))
+    approx[0] = u0
+    un = u0
+
+    I = np.eye(N + 1)
+    Tdx = 1/(dx**2)*(diag(ones(N), 1) + diag(ones(N), -1) - 2*I)
+    
+
+    for i in range(1, M + 1):
+        un = np.linalg.solve(I - d*dt/2*Tdx, LW(un, dt, dx) + d*dt/2*dot(Tdx, un))
+        approx[i] = un
+
+    return approx
 
 if __name__ == '__main__':
     def task11():
@@ -220,9 +245,31 @@ if __name__ == '__main__':
         plt.show()
 
     def task41():
-        pass
+        d = 0.01
+        N = 25
+        M = 1000
+        tf = 2
+        dx = 1/N
+        dt = tf/M
+
+        xgrid = linspace(0, 1, N + 1)
+        tgrid = linspace(0, 1, M + 1)
+
+        g1 = vectorize(lambda x: exp(-100*((x - 0.5)**2)))
+
+        [T, X] = meshgrid(xgrid, tgrid)
+        U = LWint(d, g1(xgrid), tf, N, M)
+
+        fig = plt.figure()
+        ax = fig.add_subplot(projection='3d')
+        ax.plot_wireframe(T, X, U)
+        ax.set(xlabel='x')
+        ax.set(ylabel='t')
+
+        plt.show()
 
     # task11()
     # task12()
     # task21()
-    task31()
+    # task31()
+    task41()
