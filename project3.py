@@ -93,7 +93,7 @@ def LW(uold, dt, dx):
     N = len(uold)
     unew = zeros(N)
     for i in range(N):
-        unew[i] = uold[i] - dt/(2*dx)*uold[0]*(uold[(i+1)%N] - uold[(i-1)%N]) + dt**2/2*uold[i]*(1/(dx**2)*uold[i]*(uold[(i+1)%N] - 2*uold[i] + uold[(i-1)%N]) + 1/dx*(uold[(i+1)%N] - uold[(i-1)%N]))
+        unew[i] = uold[i] - dt/(2*dx)*uold[i]*(uold[(i+1)%N] - uold[(i-1)%N]) + dt**2/2*uold[i]*(1/(dx**2)*uold[i]*(uold[(i+1)%N] - 2*uold[i] + uold[(i-1)%N]) + 1/dx*(uold[(i+1)%N] - uold[(i-1)%N]))
 
     return unew
 
@@ -246,8 +246,8 @@ if __name__ == '__main__':
 
     def task41():
         d = 0.01
-        N = 25
-        M = 100
+        N = 250
+        M = 1000
         tf = 5
         dx = 1/N
         dt = tf/M
