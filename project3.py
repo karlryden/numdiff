@@ -107,7 +107,7 @@ def LWint(d, u0, tf, N, M):
 
     I = np.eye(N + 1)
     Tdx = 1/(dx**2)*(diag(ones(N), 1) + diag(ones(N), -1) - 2*I)
-    
+    Tdx[0][-1] = Tdx[-1][0] = 1/(dx**2)
 
     for i in range(1, M + 1):
         un = np.linalg.solve(I - d*dt/2*Tdx, LW(un, dt, dx) + d*dt/2*dot(Tdx, un))
@@ -247,8 +247,8 @@ if __name__ == '__main__':
     def task41():
         d = 0.01
         N = 25
-        M = 1000
-        tf = 2
+        M = 100
+        tf = 5
         dx = 1/N
         dt = tf/M
 
